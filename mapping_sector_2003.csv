@@ -1,0 +1,63 @@
+code_sector,letter_sector,title_sector
+1,A,"Agriculture, chasse et sylviculture"
+2,A,"Agriculture, chasse et sylviculture"
+5,B,Pêche
+10,CA,Industries extractives
+11,CA,Industries extractives
+12,CA,Industries extractives
+13,CB,Industries extractives
+14,CB,Industries extractives
+15,DA,Industrie manufacturière
+16,DA,Industrie manufacturière
+17,DB,Industrie manufacturière
+18,DB,Industrie manufacturière
+19,DC,Industrie manufacturière
+20,DD,Industrie manufacturière
+21,DE,Industrie manufacturière
+22,DE,Industrie manufacturière
+23,DF,Industrie manufacturière
+24,DG,Industrie manufacturière
+25,DH,Industrie manufacturière
+26,DI,Industrie manufacturière
+27,DJ,Industrie manufacturière
+28,DJ,Industrie manufacturière
+29,DK,Industrie manufacturière
+30,DL,Industrie manufacturière
+31,DL,Industrie manufacturière
+32,DL,Industrie manufacturière
+33,DL,Industrie manufacturière
+34,DM,Industrie manufacturière
+35,DM,Industrie manufacturière
+36,DN,Industrie manufacturière
+37,DN,Industrie manufacturière
+40,E,"Production et distribution d'électricité, de gaz et d'eau"
+41,E,"Production et distribution d'électricité, de gaz et d'eau"
+45,F,Construction
+50,G,"Commerce de gros et de détail; réparation de véhicules automobiles, de motocycles et d'articles domestiques"
+51,G,"Commerce de gros et de détail; réparation de véhicules automobiles, de motocycles et d'articles domestiques"
+52,G,"Commerce de gros et de détail; réparation de véhicules automobiles, de motocycles et d'articles domestiques"
+55,H,Hôtels et restaurants
+60,I,"Transports, entreposage et communications"
+61,I,"Transports, entreposage et communications"
+62,I,"Transports, entreposage et communications"
+63,I,"Transports, entreposage et communications"
+64,I,"Transports, entreposage et communications"
+65,J,Activités financières
+66,J,Activités financières
+67,J,Activités financières
+70,K,"Immobilier, location et services aux entreprises"
+71,K,"Immobilier, location et services aux entreprises"
+72,K,"Immobilier, location et services aux entreprises"
+73,K,"Immobilier, location et services aux entreprises"
+74,K,"Immobilier, location et services aux entreprises"
+75,L,Administration publique
+80,M,Education
+85,N,Santé et action sociale
+90,O,"Services collectifs, sociaux et personnels"
+91,O,"Services collectifs, sociaux et personnels"
+92,O,"Services collectifs, sociaux et personnels"
+93,O,"Services collectifs, sociaux et personnels"
+95,P,Activités des ménages
+96,P,Activités des ménages
+97,P,Activités des ménages
+99,Q,Organismes extra-territoriaux
