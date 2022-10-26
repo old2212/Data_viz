@@ -6,6 +6,27 @@ from matplotlib.backends.backend_agg import RendererAgg
 
 #connect to the SQL database
 connection = sqlite3.connect('bce.db')
+
+
+## QUESTION 2
+
+#query tables : Which percentage of the companies are under which Status?
+sql_query_Q2 = pd.read_sql_query ('''
+                               SELECT count(EnterpriseNumber), Status
+                               FROM enterprise
+                               ''', connection)
+#Create dataframe
+df_Q2 = pd.DataFrame(sql_query_Q2)
+score_active_ent = df_Q2.iat[0,0]
+
+#Display the number of active company
+
+st.markdown(f"<h1 style='text-align: center; color: black;'>The number of active enterprise is :  </h1>", unsafe_allow_html=True)
+st.markdown(f"<h1 style='text-align: center; color: grey;'>{score_active_ent} </h1>", unsafe_allow_html=True)
+
+
+## QUESTION 1
+
 #query tables
 sql_query_Q1T1 = pd.read_sql_query ('''
                                SELECT
@@ -36,7 +57,6 @@ df_Q1 = df_Q1.drop_duplicates()
 df_Q1['percent'] = (df_Q1['Count'] / df_Q1['Count'].sum()) * 100
 df_Q1 = df_Q1[["Description", "percent"]]
 
-
 # Pie chart, where the slices will be ordered and plotted counter-clockwise:
 labels = df_Q1["Description"]
 sizes = df_Q1["percent"]
@@ -47,3 +67,6 @@ ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
 ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
 st.pyplot(fig1)
+
+
+
