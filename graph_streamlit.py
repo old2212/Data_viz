@@ -2,8 +2,7 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 import matplotlib.pyplot as plt
-
-
+from matplotlib.backends.backend_agg import RendererAgg
 
 #connect to the SQL database
 connection = sqlite3.connect('bce.db')
