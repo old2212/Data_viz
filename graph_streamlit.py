@@ -27,48 +27,31 @@ st.markdown(f"<h1 style='text-align: center; color: lightblue;'>{score_active_en
 
 ## QUESTION 1
 
+#connect to the SQL database
+connection = sqlite3.connect('bce.db')
 #query tables
 sql_query_Q1T1 = pd.read_sql_query ('''
-                               SELECT
-                               *
-                               FROM enterprise
-                               ''', connection)
+                                SELECT count(EnterpriseNumber) as Total_Enterprise, Description
+                                FROM enterprise
+                                INNER JOIN code ON enterprise.JuridicalForm = code.Code
+                                WHERE code.Language = 'FR' AND code.Category = 'JuridicalForm'
+                                Group by Description
+                                Order by count(EnterpriseNumber) DESC;
+                                ''', connection)
+
 #Create a dataframe 1 to prepare graph input
-df_Q1T1 = pd.DataFrame(sql_query_Q1T1, columns = ['EnterpriseNumber', 'JuridicalForm'])
+df_Q1T1 = pd.DataFrame(sql_query_Q1T1, columns = ['Total_Enterprise', 'Description'])
 
-#query table 2
-sql_query_Q1T2 = pd.read_sql_query ('''
-                               SELECT
-                               *
-                               FROM code
-                               ''', connection)
-
-#Create a dataframe 2 to prepare graph input
-df_Q1T2 = pd.DataFrame(sql_query_Q1T2)
-df_Q1T2 = df_Q1T2[df_Q1T2.Language.eq("FR")]
-df_Q1T2 = df_Q1T2[df_Q1T2["Category"]=="JuridicalForm"]
-df_Q1T2.rename(columns = {'Code':'JuridicalForm'}, inplace = True)
-
-#Merge
-df_Q1 = pd.merge(df_Q1T1, df_Q1T2, on='JuridicalForm')
-df_Q1 = df_Q1[["Description"]]
-df_Q1["Count"]= df_Q1.groupby("Description")["Description"].transform("count")
-df_Q1 = df_Q1.drop_duplicates()
-df_Q1['percent'] = (df_Q1['Count'] / df_Q1['Count'].sum()) * 100
-df_Q1 = df_Q1[["Description", "percent"]]
+df_Q1T1_most_frequent = df_Q1T1.iloc[:6,:]
+data = [{'Description':'Autres','Total_Enterprise':df_Q1T1['Total_Enterprise'][6:].sum()}]
+data_df = pd.DataFrame(data)
+df_Q1T1 = pd.concat([df_Q1T1_most_frequent, data_df])
 
 # Pie chart, where the slices will be ordered and plotted counter-clockwise:
-labels = df_Q1["Description"]
-sizes = df_Q1["percent"]
-
 fig1, ax1 = plt.subplots()
-ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
-        shadow=True, startangle=90)
-ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-
+ax1.pie(df_Q1T1['Total_Enterprise'], labels = df_Q1T1['Description'], autopct='%1.1f%%')
+# plt.show()
 st.pyplot(fig1)
-
-
 
 ### Question 3
 
