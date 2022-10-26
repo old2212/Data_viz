@@ -21,8 +21,8 @@ score_active_ent = df_Q2.iat[0,0]
 
 #Display the number of active company
 
-st.markdown(f"<h1 style='text-align: center; color: black;'>The number of active enterprise is :  </h1>", unsafe_allow_html=True)
-st.markdown(f"<h1 style='text-align: center; color: grey;'>{score_active_ent} </h1>", unsafe_allow_html=True)
+st.markdown(f"<h1 style='text-align: center; color: blue;'>The number of active enterprise is :  </h1>", unsafe_allow_html=True)
+st.markdown(f"<h1 style='text-align: center; color: lightblue;'>{score_active_ent} </h1>", unsafe_allow_html=True)
 
 
 ## QUESTION 1
@@ -70,3 +70,34 @@ st.pyplot(fig1)
 
 
 
+### Question 3
+
+#query tables : Which percentage of the companies are which type of entreprise?
+sql_query_Q3T1 = pd.read_sql_query ('''
+                               SELECT count(EnterpriseNumber), TypeOfEnterprise
+                               FROM enterprise
+                               Group by TypeOfEnterprise
+                               ''', connection)
+
+sql_query_Q3T2 = pd.read_sql_query ('''
+                               SELECT *
+                               FROM code
+                               WHERE Language=="FR" AND Category=="TypeOfEnterprise"
+                               ''', connection)
+
+df_Q3T1 = pd.DataFrame(sql_query_Q3T1)
+df_Q3T1.rename(columns = {'TypeOfEnterprise':'Code'}, inplace = True)
+df_Q3T2 = pd.DataFrame(sql_query_Q3T2)
+df_Q3 = pd.merge(df_Q3T1, df_Q3T2, on='Code')
+df_Q3 = df_Q3[["count(EnterpriseNumber)", "Description"]]
+
+# Pie chart, where the slices will be ordered and plotted counter-clockwise:
+labels = df_Q3["Description"]
+sizes = df_Q3["count(EnterpriseNumber)"]
+
+fig3, ax3 = plt.subplots()
+ax3.pie(sizes, labels=labels, autopct='%1.1f%%',
+        shadow=False, startangle=90)
+ax3.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+st.pyplot(fig3)
