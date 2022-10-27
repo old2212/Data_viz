@@ -3,6 +3,8 @@ import sqlite3
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import RendererAgg
+import time
+from datetime import datetime
 
 #connect to the SQL database
 connection = sqlite3.connect('bce.db')
@@ -84,3 +86,45 @@ ax3.pie(sizes, labels=labels, autopct='%1.1f%%',
 ax3.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
 st.pyplot(fig3)
+
+### QUESTION 4
+
+df_Q4M2008 = pd.read_csv("mapping_sector_2008.csv")
+sql_query_Q4T1 = pd.read_sql_query ('''
+                               SELECT EnterpriseNumber, StartDate, NaceCode
+                               FROM enterprise
+                               INNER JOIN activity ON enterprise.EnterpriseNumber = activity.EntityNumber
+                               WHERE NaceVersion==2008
+                               ''',connection)
+
+df_Q4T1 = pd.DataFrame(sql_query_Q4T1)
+df_Q4T1["NaceCode"] = df_Q4T1.NaceCode.str[:2].astype(int)
+# df_Q4T1["StartDate"] = df_Q4T1.StartDate.str[:10].replace('-','', regex=True)
+df_Q4M2008 = pd.read_csv("mapping_sector_2008.csv")
+sql_query_Q4T1 = pd.read_sql_query ('''
+                               SELECT EnterpriseNumber, StartDate, NaceCode
+                               FROM enterprise
+                               INNER JOIN activity ON enterprise.EnterpriseNumber = activity.EntityNumber
+                               WHERE NaceVersion==2008
+                               ''',connection)
+#DATA CLEANING : FIrst two digit extract and age caclulation
+df_Q4T1 = pd.DataFrame(sql_query_Q4T1)
+df_Q4T1["NaceCode"] = df_Q4T1.NaceCode.str[:2].astype(int)
+
+today = datetime.today()
+
+df_Q4T1["StartDate"] = pd.to_datetime(df_Q4T1["StartDate"], errors='coerce')
+df_Q4T1['age'] = df_Q4T1["StartDate"].apply(
+               lambda x: today.year - x.year - 
+               ((today.month, today.day) < (x.month, x.day)))
+
+df_Q4M2008.code_sector.astype(int)
+dict_M2008 = df_Q4M2008.set_index('code_sector').to_dict()['title_sector']
+df_Q4T1["sector"] = df_Q4T1["NaceCode"].map(dict_M2008)
+df_Q4T1 = df_Q4T1.groupby("sector").agg({"age":"mean"})
+df_Q4T1= df_Q4T1.sort_values(by=['age'], inplace=True)
+
+fig, ax = plt.subplots()
+ax.bar(df_Q4T1['sector'], df_Q4T1['age'])
+plt.xticks(rotation=30, ha='right')
+st.pyplot(fig)
