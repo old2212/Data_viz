@@ -2,35 +2,35 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_agg import RendererAgg
-import time
 from datetime import datetime
+import textwrap
 
 #connect to the SQL database
 connection = sqlite3.connect('bce.db')
 
-
 ## QUESTION 2
 
-#query tables : Which percentage of the companies are under which Status?
 sql_query_Q2 = pd.read_sql_query ('''
-                               SELECT count(EnterpriseNumber), Status
+                               SELECT count(EnterpriseNumber) as Enterprise, Status
                                FROM enterprise
                                ''', connection)
 #Create dataframe
 df_Q2 = pd.DataFrame(sql_query_Q2)
+
+#Calculating percentage
+df_Q2['Percentage'] = (df_Q2['Enterprise']/df_Q2['Enterprise'].sum()) * 100
+#Assigning scores into values
 score_active_ent = df_Q2.iat[0,0]
+score_active_ent_prc = int(df_Q2.iat[0,2])
 
-#Display the number of active company
-
-st.markdown(f"<h1 style='text-align: center; color: blue;'>The number of active enterprise is :  </h1>", unsafe_allow_html=True)
-st.markdown(f"<h1 style='text-align: center; color: lightblue;'>{score_active_ent} </h1>", unsafe_allow_html=True)
+#Printouts into streamlit
+st.markdown(f"<h2 style='text-align: center; color: darkblue;'>ACTIVE ENTERPRISES :  </h1>", unsafe_allow_html=True)
+st.markdown(f"<h2 style='text-align: center; color: grey;'>{score_active_ent_prc}% ({score_active_ent}) </h1>", unsafe_allow_html=True)
+st.markdown("##")
 
 
 ## QUESTION 1
 
-#connect to the SQL database
-connection = sqlite3.connect('bce.db')
 #query tables
 sql_query_Q1T1 = pd.read_sql_query ('''
                                 SELECT count(EnterpriseNumber) as Total_Enterprise, Description
@@ -89,6 +89,7 @@ st.pyplot(fig3)
 
 ### QUESTION 4
 
+#SQL query + df creating
 df_Q4M2008 = pd.read_csv("mapping_sector_2008.csv")
 sql_query_Q4T1 = pd.read_sql_query ('''
                                SELECT EnterpriseNumber, StartDate, NaceCode
@@ -97,17 +98,7 @@ sql_query_Q4T1 = pd.read_sql_query ('''
                                WHERE NaceVersion==2008
                                ''',connection)
 
-df_Q4T1 = pd.DataFrame(sql_query_Q4T1)
-df_Q4T1["NaceCode"] = df_Q4T1.NaceCode.str[:2].astype(int)
-# df_Q4T1["StartDate"] = df_Q4T1.StartDate.str[:10].replace('-','', regex=True)
-df_Q4M2008 = pd.read_csv("mapping_sector_2008.csv")
-sql_query_Q4T1 = pd.read_sql_query ('''
-                               SELECT EnterpriseNumber, StartDate, NaceCode
-                               FROM enterprise
-                               INNER JOIN activity ON enterprise.EnterpriseNumber = activity.EntityNumber
-                               WHERE NaceVersion==2008
-                               ''',connection)
-#DATA CLEANING : FIrst two digit extract and age caclulation
+#DATA CLEANING : First two digit extract and age caclulation
 df_Q4T1 = pd.DataFrame(sql_query_Q4T1)
 df_Q4T1["NaceCode"] = df_Q4T1.NaceCode.str[:2].astype(int)
 
@@ -118,13 +109,21 @@ df_Q4T1['age'] = df_Q4T1["StartDate"].apply(
                lambda x: today.year - x.year - 
                ((today.month, today.day) < (x.month, x.day)))
 
+#Create dictionnary from csv file
 df_Q4M2008.code_sector.astype(int)
 dict_M2008 = df_Q4M2008.set_index('code_sector').to_dict()['title_sector']
+#DO the mapping btw the df and the dictionary
 df_Q4T1["sector"] = df_Q4T1["NaceCode"].map(dict_M2008)
-df_Q4T1 = df_Q4T1.groupby("sector").agg({"age":"mean"})
-df_Q4T1= df_Q4T1.sort_values(by=['age'], inplace=True)
+#Create the new dataframe with grouping and average age per sector
+df_Q4T1 = df_Q4T1.groupby("sector").agg({"age":"mean"}).round(2).sort_values('age', ascending=False).reset_index()
 
+#GRAPH 4 --> need to finetune the graph with sector on Y axis + shorten the labels
 fig, ax = plt.subplots()
-ax.bar(df_Q4T1['sector'], df_Q4T1['age'])
-plt.xticks(rotation=30, ha='right')
+ax.barh(df_Q4T1['sector'], df_Q4T1['age'])
+f = lambda x: textwrap.fill(x.get_text(), 75)
+ax.set_yticklabels(map(f, ax.get_yticklabels()))
+fig.set_size_inches(18.5, 15.5, forward=True)
+plt.title("average company's age in each sector")
+plt.xlabel('Age in Years')
+# plt.style.use('ggplot')
 st.pyplot(fig)

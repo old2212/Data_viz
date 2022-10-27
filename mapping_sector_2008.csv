@@ -31,17 +31,17 @@ code_sector,letter_sector,title_sector
 31,C,Industrie manufacturière
 32,C,Industrie manufacturière
 33,C,Industrie manufacturière
-35,D,"Production et distribution d'électricité, de gaz, de vapeur et d'air conditionné"
-36,E,"Production et distribution d'eau; assainissement, gestion des déchets et dépollution"
-37,E,"Production et distribution d'eau; assainissement, gestion des déchets et dépollution"
-38,E,"Production et distribution d'eau; assainissement, gestion des déchets et dépollution"
-39,E,"Production et distribution d'eau; assainissement, gestion des déchets et dépollution"
+35,D,"Prod. et distr. d'électricité, de gaz, de vapeur et d'air conditionné"
+36,E,"Prod. et distr. d'eau; assainissement, gestion des déchets et dépollution"
+37,E,"Prod. et distr. d'eau; assainissement, gestion des déchets et dépollution"
+38,E,"Prod. et distr. d'eau; assainissement, gestion des déchets et dépollution"
+39,E,"Prod. et distr. d'eau; assainissement, gestion des déchets et dépollution"
 41,F,Construction
 42,F,Construction
 43,F,Construction
-45,G,Commerce; réparation de véhicules automobiles et de motocycles
-46,G,Commerce; réparation de véhicules automobiles et de motocycles
-47,G,Commerce; réparation de véhicules automobiles et de motocycles
+45,G,Commerce; réparation de véhicules auto. et de moto.
+46,G,Commerce; réparation de véhicules auto. et de moto.
+47,G,Commerce; réparation de véhicules auto. et de moto.
 49,H,Transports et entreposage
 50,H,Transports et entreposage
 51,H,Transports et entreposage
@@ -66,12 +66,12 @@ code_sector,letter_sector,title_sector
 73,M,"Activités spécialisées, scientifiques et techniques"
 74,M,"Activités spécialisées, scientifiques et techniques"
 75,M,"Activités spécialisées, scientifiques et techniques"
-77,N,Activités de services administratifs et de soutien
-78,N,Activités de services administratifs et de soutien
-79,N,Activités de services administratifs et de soutien
-80,N,Activités de services administratifs et de soutien
-81,N,Activités de services administratifs et de soutien
-82,N,Activités de services administratifs et de soutien
+77,N,Activités de services admin. et de soutien
+78,N,Activités de services admin. et de soutien
+79,N,Activités de services admin. et de soutien
+80,N,Activités de services admin. et de soutien
+81,N,Activités de services admin. et de soutien
+82,N,Activités de services admin. et de soutien
 84,O,Administration publique
 85,P,Enseignement
 86,Q,Santé humaine et action sociale
@@ -84,6 +84,6 @@ code_sector,letter_sector,title_sector
 94,S,Autres activités de services
 95,S,Autres activités de services
 96,S,Autres activités de services
-97,T,Activités des ménages en tant qu'employeurs; activités indifférenciées des ménages en tant que producteurs de biens et services pour usage propre
-98,T,Activités des ménages en tant qu'employeurs; activités indifférenciées des ménages en tant que producteurs de biens et services pour usage propre
+97,T,Activités (A) des ménages (m) en tant qu'employeurs; (A) indifférenciées des (m) en tant que prod. de B&S pour usage propre
+98,T,Activités (A) des ménages (m) en tant qu'employeurs; (A) indifférenciées des (m) en tant que prod. de B&S pour usage propre
 99,U,Activités extra-territoriales
