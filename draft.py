@@ -4,8 +4,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 import textwrap
-import seaborn as sns
-import os
 import time
 from matplotlib.backends.backend_agg import RendererAgg
 
