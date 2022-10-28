@@ -15,7 +15,6 @@ connection = sqlite3.connect('bce.db')
 #configuration of the page
 st.set_page_config(page_title="Business insights from active companies in Belgium", page_icon="https://www.executivechronicles.com/wp-content/uploads/2021/05/Business-Insights-and-Analytics.jpg", layout="wide", initial_sidebar_state="auto", menu_items=None)
 
-
 ## QUESTION 2
 
 @st.cache(allow_output_mutation=True)
@@ -34,31 +33,35 @@ score_active_ent = f'{score_active_ent:,}'
 score_active_ent_prc = int(df_Q2.iat[0,2])
 #Printouts into streamlit
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 with col1:
-        st.markdown(f"<h1 style='text-align: center; color: darkgrey;'>GAIN DATA INSIGHT OF ACTIVE ENTERPRISES IN BELGIUM</h3>", unsafe_allow_html=True)
-        st.markdown("#")
-        st.markdown("#")
-        
+        st.image('https://cdn.discordapp.com/attachments/1011611344136577024/1021389783777431662/logo-becode.png', width=125)
+
 with col2:
+        st.markdown(f"<h2 style='text-align: center; color: darkblue;'>GAIN DATA INSIGHT OF ACTIVE ENTERPRISES IN BELGIUM</h3>", unsafe_allow_html=True)
+        st.markdown("#")
+        st.markdown("#")
+
+with col3:
         st.markdown("###")
-        st.markdown(f"<h1 style='text-align: center; color: darkblue;'>{score_active_ent}          Entities </h3>", unsafe_allow_html=True)
+        st.markdown(f"<h2 style='text-align: center; color: darkgrey;'>{score_active_ent}          Entities </h3>", unsafe_allow_html=True)
         # st.markdown(f"<h1 style='text-align: center; color: darkblue;'>ENTERPRISES</h3>", unsafe_allow_html=True)
         st.markdown("#")
         st.markdown("#")
 
-st.info("Source of data : [Banque-Carrefour des Entreprises - Open Data](https://economie.fgov.be/fr/themes/entreprises/banque-carrefour-des/services-pour-tous/reutilisation-de-donnees/banque-carrefour-des-0)")
-# st.markdown(f"<h1 style='text-align: center; color: darkblue;'> {score_active_ent} </h1>", unsafe_allow_html=True)
-# st.markdown(f"<h1 style='text-align: center; color: darkgrey;'>ACTIVE ENTERPRISES IN BELGIUM </h3>", unsafe_allow_html=True)
-#st.markdown(f"<h2 style='text-align: center; color: grey;'>{score_active_ent_prc}% ({score_active_ent}) </h1>", unsafe_allow_html=True)
 
 
+st.info("Data source : [Crossroads Bank for Enterprises - Open data](https://economie.fgov.be/fr/themes/entreprises/banque-carrefour-des/services-pour-tous/reutilisation-de-donnees/banque-carrefour-des-0).  \nThe Crossroads Bank for Enterprises (CBE) is a database owned by the FPS Economy containing all the basic data concerning companies and their business units.  \n   \nNACE codes : [Complete list](https://nacev2.com/fr).  \nNACE (Nomenclature of Economic Activities) is the European statistical classification of economic activities. NACE groups organizations according to their business activities.")
+st.markdown("#")
+st.markdown("#")
 
+
+plt.style.use('bmh')
 tab1, tab2, tab3 = st.tabs(["Juridical Form", "Type", "Age by sector"])
 ## QUESTION 1
 with st.spinner(text='In progress'):
-                time.sleep(5)
+                time.sleep(1)
                 st.balloons()
 with tab1:
         @st.cache(allow_output_mutation=True)
@@ -84,7 +87,7 @@ with tab1:
         # type_of_enterprise = df_Q1T1['Description'].unique().tolist()
         # type_selected = st.sidebar.multiselect('Type of enterprise', type_of_enterprise, type_of_enterprise)
         # st.write('You selected:', type_selected)
-        plt.style.use('ggplot')
+        
         fig1, ax1 = plt.subplots()
         ax1.pie(df_Q1T1['Total_Enterprise'], labels = df_Q1T1['Description'], autopct='%1.1f%%')
         plt.title("JURIDICAL FORM") 
@@ -144,41 +147,41 @@ with tab3:
         def get_data_mapping():
                 return pd.read_csv("mapping_sector_2008.csv")
 
-        # @st.cache(allow_output_mutation=True)
+        @st.cache(allow_output_mutation=True)
         def get_data_enterprise_activity():
-                return pd.read_sql_query ('''
+                df_Q4T1 = pd.read_sql_query ('''
                                 SELECT EnterpriseNumber, StartDate, NaceCode
                                 FROM enterprise
                                 INNER JOIN activity ON enterprise.EnterpriseNumber = activity.EntityNumber
                                 WHERE NaceVersion==2008
-                                ''',connection)
+                                ''', connection)
 
-        #DATA CLEANING : 
-        # First two digit extract
+                #DATA CLEANING : 
+                # First two digit extract
+                df_Q4T1["NaceCode"] = df_Q4T1.NaceCode.str[:2].astype(int)
+                # Age caclulation
+                df_Q4T1['StartDate'] = pd.to_datetime(df_Q4T1['StartDate'])
+                df_Q4T1['StartDate'] = df_Q4T1['StartDate'].dt.year
+                today = datetime.today()
+                df_Q4T1['Age'] = today.year - df_Q4T1['StartDate']
+
+                #Create dictionnary from csv file
+                df_Q4M2008 = get_data_mapping()
+                df_Q4M2008.code_sector.astype(int)
+                dict_M2008 = df_Q4M2008.set_index('code_sector').to_dict()['title_sector']
+                #Do the mapping btw the df and the dictionary
+                df_Q4T1["sector"] = df_Q4T1["NaceCode"].map(dict_M2008)
+                #Create the new dataframe with grouping and average age per sector
+                return df_Q4T1.groupby("sector").agg({"Age":"mean"}).round(2).sort_values('Age', ascending=False).reset_index()
+
         df_Q4T1 = get_data_enterprise_activity()
-        df_Q4T1["NaceCode"] = df_Q4T1.NaceCode.str[:2].astype(int)
-        # Age caclulation
-        df_Q4T1['StartDate'] = pd.to_datetime(df_Q4T1['StartDate'])
-        df_Q4T1['StartDate'] = df_Q4T1['StartDate'].dt.year
-        today = datetime.today()
-        df_Q4T1['Age'] = today.year - df_Q4T1['StartDate']
-
-        #Create dictionnary from csv file
-        df_Q4M2008 = get_data_mapping()
-        df_Q4M2008.code_sector.astype(int)
-        dict_M2008 = df_Q4M2008.set_index('code_sector').to_dict()['title_sector']
-        #Do the mapping btw the df and the dictionary
-        df_Q4T1["sector"] = df_Q4T1["NaceCode"].map(dict_M2008)
-        #Create the new dataframe with grouping and average age per sector
-        df_Q4T1 = df_Q4T1.groupby("sector").agg({"Age":"mean"}).round(2).sort_values('Age', ascending=False).reset_index()
-
         #GRAPH 4 --> need to finetune the graph with sector on Y axis + shorten the labels
         # st.write(f"<h1 style='text-align: center; color: black;'>ENTERPRISE AVERAGE AGE BY SECTOR</h0>", unsafe_allow_html=True)
         fig, ax = plt.subplots()
         ax.barh(df_Q4T1['sector'], df_Q4T1['Age'])
-        f = lambda x: textwrap.fill(x.get_text(), 75)
+        f = lambda x: textwrap.fill(x.get_text(), 50)
         ax.set_yticklabels(map(f, ax.get_yticklabels()))
         fig.set_size_inches(18.5, 15.5, forward=True)
-        plt.title("ENTERPRISE AVERAGE AGE BY SECTOR",fontsize=40)
+        plt.title("ENTERPRISE AVERAGE AGE BY SECTOR",fontsize=40, pad=40)
         plt.xlabel('Age (Years)')
         st.pyplot(fig)
